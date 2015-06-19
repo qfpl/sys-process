@@ -1,0 +1,15 @@
+0.1.0
+
+* Rewrite that uses the `notzero` package to implement exit codes.
+
+0.0.10
+
+* API improvements.
+
+0.0.9
+
+* API improvements.
+
+0.0.8
+
+* Initial version that uses its own `ExitCode` abstract data type.
