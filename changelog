@@ -1,15 +1,9 @@
+0.1.1
+
+* Change package category to System.
+* Update `notzero` dependency to 0.0.8.
+
 0.1.0
 
-* Rewrite that uses the `notzero` package to implement exit codes.
+* Initial version inspired by `system-command`.
 
-0.0.10
-
-* API improvements.
-
-0.0.9
-
-* API improvements.
-
-0.0.8
-
-* Initial version that uses its own `ExitCode` abstract data type.
