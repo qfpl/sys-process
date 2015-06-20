@@ -30,20 +30,15 @@ import qualified System.Process as Process
 
 data CreateProcess =
   CreateProcess
-    CmdSpec                   -- ^ Executable & arguments, or shell command
-    (Maybe FilePath)          -- ^ Optional path to the working directory for the new process
-    (Maybe [(String,String)]) -- ^ Optional environment (otherwise inherit from the current process)
-    StdStream                 -- ^ How to determine stdin
-    StdStream                 -- ^ How to determine stdout
-    StdStream                 -- ^ How to determine stderr
-    Bool                      -- ^ Close all file descriptors except stdin, stdout and stderr in the new process (on Windows, only works if std_in, std_out, and std_err are all Inherit)
-    Bool                      -- ^ Create a new process group
-    Bool                      -- ^ Delegate control-C handling. Use this for interactive console processes to let them handle control-C themselves (see below for details).
-                                             --
-                                             --   On Windows this has no effect.
-                                             --
-                                             --   /Since: 1.2.0.0/
-   
+    CmdSpec                   
+    (Maybe FilePath)          
+    (Maybe [(String,String)]) 
+    StdStream
+    StdStream
+    StdStream
+    Bool     
+    Bool 
+    Bool 
   deriving (Eq, Show)
 
 class AsCreateProcess p f s where
