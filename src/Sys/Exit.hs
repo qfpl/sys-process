@@ -1,7 +1,6 @@
 module Sys.Exit(
   module ExitCode
 , module Process
-, Process.ProcessHandle
 -- * Exit
 , exitWith
 , exitWithFailure
@@ -15,7 +14,6 @@ import Sys.ExitCode
 import Sys.Process as Process
 import Sys.ExitCode as ExitCode
 import System.IO
-import qualified System.Process as Process
 import Prelude
 
 -- ---------------------------------------------------------------------------
@@ -47,6 +45,7 @@ import Prelude
 -- thread, 'exitWith' will throw an 'ExitException' as normal, but the
 -- exception will not cause the process itself to exit.
 --
+-- /see 'System.Exit.exitWith/.
 exitWith ::
   ExitCode
   -> IO a
@@ -62,6 +61,8 @@ exitWithFailure =
 -- | The computation 'exitWithFailure1' is equivalent to
 -- 'exitWith' @(@'ExitFailure' /exitfail/@)@,
 -- where /exitfail/ is implementation-dependent.
+--
+-- /see 'System.Exit.exitWithFailure/.
 exitWithFailure1 ::
   IO a
 exitWithFailure1 =
@@ -70,6 +71,8 @@ exitWithFailure1 =
 -- | The computation 'exitWithSuccess' is equivalent to
 -- 'exitWith' 'ExitSuccess', It terminates the program
 -- successfully.
+--
+-- /see 'System.Exit.exitWithSuccess/.
 exitWithSuccess ::
   IO a
 exitWithSuccess =

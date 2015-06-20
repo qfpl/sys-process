@@ -30,7 +30,7 @@ import qualified System.Process as Process
 
 data CreateProcess =
   CreateProcess
-    CmdSpec                   
+    CmdSpec
     (Maybe FilePath)          
     (Maybe [(String,String)]) 
     StdStream
@@ -41,6 +41,7 @@ data CreateProcess =
     Bool 
   deriving (Eq, Show)
 
+-- | Types that related to @CreateProcess@.
 class AsCreateProcess p f s where
   _CreateProcess ::
     Optic' p f s CreateProcess
@@ -79,6 +80,7 @@ instance Applicative f => AsRawCommand (->) f CreateProcess where
   _RawCommand =
     _CmdSpec . _RawCommand
 
+-- | Types that relate to a (maybe) working directory.
 class AsWorkingDirectory p f s where
   _WorkingDirectory ::
     Optic' p f s (Maybe FilePath)
@@ -93,6 +95,7 @@ instance Functor f => AsWorkingDirectory (->) f CreateProcess where
       (\(CreateProcess _ p _ _ _ _ _ _ _) -> p)
       (\(CreateProcess s _ e i o r d g c) p -> CreateProcess s p e i o r d g c)
 
+-- | Types that relate to an environment.
 class AsEnvironment p f s where
   _Environment ::
     Optic' p f s (Maybe [(String, String)])
@@ -107,6 +110,7 @@ instance Functor f => AsEnvironment (->) f CreateProcess where
       (\(CreateProcess _ _ e _ _ _ _ _ _) -> e)
       (\(CreateProcess s p _ i o r d g c) e -> CreateProcess s p e i o r d g c)
 
+-- | Types that relate to a standard input stream.
 class AsStdin p f s where
   _Stdin ::
     Optic' p f s StdStream
@@ -121,6 +125,7 @@ instance Functor f => AsStdin (->) f CreateProcess where
       (\(CreateProcess _ _ _ i _ _ _ _ _) -> i)
       (\(CreateProcess s p e _ o r d g c) i -> CreateProcess s p e i o r d g c)
 
+-- | Types that relate to a standard output stream.
 class AsStdout p f s where
   _Stdout ::
     Optic' p f s StdStream
@@ -135,6 +140,7 @@ instance Functor f => AsStdout (->) f CreateProcess where
       (\(CreateProcess _ _ _ _ o _ _ _ _) -> o)
       (\(CreateProcess s p e i _ r d g c) o -> CreateProcess s p e i o r d g c)
 
+-- | Types that relate to a standard error stream.
 class AsStderr p f s where
   _Stderr ::
     Optic' p f s StdStream
@@ -149,6 +155,7 @@ instance Functor f => AsStderr (->) f CreateProcess where
       (\(CreateProcess _ _ _ _ _ r _ _ _) -> r)
       (\(CreateProcess s p e i o _ d g c) r -> CreateProcess s p e i o r d g c)
 
+-- | Types that relate to closing descriptors.
 class AsCloseDescriptors p f s where
   _CloseDescriptors ::
     Optic' p f s Bool
@@ -163,6 +170,7 @@ instance Functor f => AsCloseDescriptors (->) f CreateProcess where
       (\(CreateProcess _ _ _ _ _ _ d _ _) -> d)
       (\(CreateProcess s p e i o r _ g c) d -> CreateProcess s p e i o r d g c)
 
+-- | Types that relate to creating groups.
 class AsCreateGroup p f s where
   _CreateGroup ::
     Optic' p f s Bool
@@ -177,6 +185,7 @@ instance Functor f => AsCreateGroup (->) f CreateProcess where
       (\(CreateProcess _ _ _ _ _ _ _ g _) -> g)
       (\(CreateProcess s p e i o r d _ c) g -> CreateProcess s p e i o r d g c)
 
+-- | Types that relate to delegating CTRL-C.
 class AsDelegateCtrlC p f s where
   _DelegateCtrlC ::
     Optic' p f s Bool
