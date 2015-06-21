@@ -28,6 +28,9 @@ import Sys.StdStream(StdStream, AsStdStream(_StdStream))
 import System.FilePath(FilePath)
 import qualified System.Process as Process
 
+-- | Data type representing a process.
+--
+-- /see 'System.Process.CreateProcess'/.
 data CreateProcess =
   CreateProcess
     CmdSpec
