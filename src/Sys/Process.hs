@@ -6,6 +6,9 @@ module Sys.Process(
 -- * Running sub-processes
 , createProcess
 , createProcess_
+, createProcessHandle
+, createWaitProcess
+, createMakeWaitProcess
 , shell
 , proc
 , procIn
@@ -32,7 +35,9 @@ module Sys.Process(
 ) where
 
 import Control.Category(Category((.)))
-import Control.Lens((#), (%~), (^.), (.~), _1)
+import Control.Monad((>=>), mapM_)
+import Control.Lens((#), (%~), (^.), (.~), _1, _4, view)
+import Data.Bool(Bool(True))
 import Data.Functor(Functor(fmap))
 import Data.Maybe(Maybe(Just))
 import Data.String(String)
@@ -40,6 +45,7 @@ import Sys.CmdSpec as CmdSpec
 import Sys.CreateProcess as CreateProcess
 import Sys.StdStream as StdStream
 import Sys.ExitCode(ExitCode, unExitCode)
+import System.Directory(createDirectoryIfMissing)
 import System.FilePath(FilePath)
 import System.IO(Handle, IO)
 import qualified System.Process as Process
@@ -113,6 +119,25 @@ createProcess_ ::
   -> IO (Maybe Handle, Maybe Handle, Maybe Handle, Process.ProcessHandle) 
 createProcess_ s =
   Process.createProcess_ s . (_CreateProcess #)
+
+createProcessHandle ::
+  CreateProcess
+  -> IO Process.ProcessHandle
+createProcessHandle =
+  fmap (view _4) . createProcess
+
+createWaitProcess ::
+  CreateProcess
+  -> IO ExitCode
+createWaitProcess =
+  createProcessHandle >=> waitForProcess
+
+createMakeWaitProcess ::
+  CreateProcess
+  -> IO ExitCode
+createMakeWaitProcess p =
+  do mapM_ (createDirectoryIfMissing True) (p ^. _WorkingDirectory)
+     createWaitProcess p
 
 -- | Construct a 'CreateProcess' record for passing to 'createProcess',
 -- representing a command to be passed to the shell.
