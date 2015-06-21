@@ -1,0 +1,8 @@
+* reorganise modules
+
+waitForProcessM ::
+  ProcessHandle
+  -> ExitCodeM IO
+waitForProcessM =
+  exitCodeM . waitForProcess
+  
