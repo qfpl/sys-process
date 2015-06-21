@@ -8,6 +8,7 @@ module Sys.Process(
 , createProcess_
 , shell
 , proc
+, procIn
 -- ** Simpler functions for common tasks
 , callProcess
 , callCommand
@@ -31,9 +32,9 @@ module Sys.Process(
 ) where
 
 import Control.Category(Category((.)))
-import Control.Lens((#), (%~), (^.), _1)
+import Control.Lens((#), (%~), (^.), (.~), _1)
 import Data.Functor(Functor(fmap))
-import Data.Maybe(Maybe)
+import Data.Maybe(Maybe(Just))
 import Data.String(String)
 import Sys.CmdSpec as CmdSpec
 import Sys.CreateProcess as CreateProcess
@@ -135,6 +136,14 @@ proc ::
   -> CreateProcess
 proc p s =
   Process.proc p s ^. _CreateProcess
+
+procIn ::
+  FilePath -- ^ the working directory
+  -> FilePath
+  -> [String]
+  -> CreateProcess
+procIn dir p s =
+  (_WorkingDirectory .~ Just dir) (proc p s)
 
 -- | Creates a new process to run the specified command with the given
 -- arguments, and wait for it to finish.  If the command returns a non-zero
