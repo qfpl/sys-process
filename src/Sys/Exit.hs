@@ -6,9 +6,19 @@ module Sys.Exit(
 , exitWithFailure
 , exitWithFailure1
 , exitWithSuccess
+, ExitCodeM
+, exitCodeM
+, createWaitProcessM
+, createMakeWaitProcessM
+, createWaitProcesses
+, createMakeWaitProcesses
+, exit
+, createWaitProcessesExit
+, createMakeWaitProcessesExit
 ) where
 
 import Data.NotZero
+import Data.NotZeroOr
 import qualified System.Exit as Exit
 import Sys.ExitCode
 import Sys.Process as Process
@@ -77,3 +87,60 @@ exitWithSuccess ::
   IO a
 exitWithSuccess =
   exitWith exitSuccess
+
+type ExitCodeM f =
+  NumberM Int f
+
+exitCodeM ::
+  f (Number Int) 
+  -> ExitCodeM f
+exitCodeM =
+  NotZeroOrT
+
+createWaitProcessM ::
+  CreateProcess 
+  -> ExitCodeM IO
+createWaitProcessM =
+  exitCodeM . createWaitProcess
+
+createMakeWaitProcessM ::
+  CreateProcess 
+  -> ExitCodeM IO
+createMakeWaitProcessM =
+  exitCodeM . createMakeWaitProcess
+
+createWaitProcesses ::
+  Foldable t =>
+  t CreateProcess
+  -> ExitCodeM IO
+createWaitProcesses =
+  mapM_ createWaitProcessM
+
+createMakeWaitProcesses ::
+  Foldable t =>
+  t CreateProcess
+  -> ExitCodeM IO
+createMakeWaitProcesses =
+  mapM_ createMakeWaitProcessM
+
+exit ::
+  ExitCodeM IO
+  -> IO ()
+exit e =
+  let NotZeroOrT x = e
+  in x >>= exitWith
+
+createWaitProcessesExit ::
+  Foldable t =>
+  t CreateProcess
+  -> IO ()
+createWaitProcessesExit =
+  exit . createWaitProcesses
+
+createMakeWaitProcessesExit ::
+  Foldable t =>
+  t CreateProcess
+  -> IO ()
+createMakeWaitProcessesExit =
+  exit . createMakeWaitProcesses
+
