@@ -35,9 +35,10 @@ module Sys.Process(
 ) where
 
 import Control.Category(Category((.)))
-import Control.Monad((>=>), mapM_)
+import Control.Monad((>=>))
 import Control.Lens((#), (%~), (^.), (.~), _1, _4, view)
 import Data.Bool(Bool(True))
+import Data.Foldable(mapM_)
 import Data.Functor(Functor(fmap))
 import Data.Maybe(Maybe(Just))
 import Data.String(String)
@@ -49,7 +50,6 @@ import System.Directory(createDirectoryIfMissing)
 import System.FilePath(FilePath)
 import System.IO(Handle, IO)
 import qualified System.Process as Process
-import Prelude()
 
 {- |
 This is the most general way to spawn an external process.  The

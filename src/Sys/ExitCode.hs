@@ -10,11 +10,11 @@ module Sys.ExitCode(
 , unExitCode
 ) where
 
-import Control.Lens
+import Control.Lens(Prism', prism', (#))
 import Data.Int(Int)
-import Data.Maybe
-import Data.NotZero
-import Data.NotZeroOr
+import Data.Maybe(Maybe(Nothing, Just))
+import Data.NotZero(NotZero, notZero, notZeroElse, notZero1)
+import Data.NotZeroOr(Number, NotZeroOr(IsNotZero, OrNotZero), _IsNotZero, _OrNotZero)
 import qualified System.Exit as Exit
 
 type ExitCode =

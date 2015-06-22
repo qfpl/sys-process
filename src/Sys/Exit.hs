@@ -17,14 +17,16 @@ module Sys.Exit(
 , createMakeWaitProcessesExit
 ) where
 
-import Data.NotZero
-import Data.NotZeroOr
-import qualified System.Exit as Exit
-import Sys.ExitCode
+import Control.Category(Category((.)))
+import Control.Monad(Monad((>>=)))
+import Data.Foldable(Foldable, mapM_)
+import Data.Int(Int)
+import Data.NotZero(NotZero, notZero1)
+import Data.NotZeroOr(NumberM, Number, NotZeroOrT(NotZeroOrT))
 import Sys.Process as Process
 import Sys.ExitCode as ExitCode
-import System.IO
-import Prelude
+import qualified System.Exit as Exit
+import System.IO(IO)
 
 -- ---------------------------------------------------------------------------
 -- exitWith
