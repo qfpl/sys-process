@@ -1,3 +1,5 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Sys.Process(
   module CmdSpec
 , module CreateProcess

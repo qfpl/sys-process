@@ -1,3 +1,5 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Sys.Exit(
   module ExitCode
 , module Process

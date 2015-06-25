@@ -1,3 +1,5 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+
 module Sys.ExitCode(
   ExitCode
 , _ExitFailure
