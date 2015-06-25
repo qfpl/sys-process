@@ -1,7 +1,11 @@
+{-# LANGUAGE CPP #-}
+
 module Main where
 
+#if !(MIN_VERSION_base(4,8,0))
+import Control.Applicative(Applicative((<*>), pure))
+#endif
 import Build_doctests (deps)
-import Control.Applicative
 import Control.Monad
 import Data.List
 import System.Directory
