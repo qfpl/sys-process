@@ -24,7 +24,7 @@ import Control.Monad(Monad((>>=)))
 import Data.Foldable(Foldable, mapM_)
 import Data.Int(Int)
 import Data.NotZero(NotZero, notZero1)
-import Data.NotZeroOr(NumberM, Number, NotZeroOrT(NotZeroOrT))
+import Data.NotZeroOr(Number, NotZeroOrT(NotZeroOrT))
 import Sys.Process as Process
 import Sys.ExitCode as ExitCode
 import qualified System.Exit as Exit
@@ -93,7 +93,7 @@ exitWithSuccess =
   exitWith exitSuccess
 
 type ExitCodeM f =
-  NumberM Int f
+  NotZeroOrT Int f ()
 
 exitCodeM ::
   f (Number Int) 

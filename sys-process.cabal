@@ -1,5 +1,5 @@
 name:               sys-process
-version:            0.1.6
+version:            0.2.0
 license:            BSD3
 license-file:       LICENSE
 author:             Tony Morris <ʇǝu˙sıɹɹoɯʇ@ןןǝʞsɐɥ> <dibblego>
@@ -29,15 +29,15 @@ library
                     Haskell2010
 
   build-depends:
-                      base          >= 3   && < 5
+                      base          >= 3   && <= 5
                     , mtl           >= 2.0 && < 2.3
                     , semigroups    >= 0.8
                     , semigroupoids >= 4.0
                     , bifunctors    >= 3.0
                     , lens          >= 4.0 && < 5
-                    , transformers  >= 0.3 && < 0.5
-                    , process       >= 1.2.3 && < 1.3
-                    , notzero       >= 0.0.10 && <= 0.1
+                    , transformers  >= 0.3 && < 0.6
+                    , process       >= 1.2.3 && < 1.7
+                    , notzero       >= 0.0.11 && <= 0.1
                     , filepath      >= 1.4 && < 2.0
                     , directory     >= 1.2 && < 2.0
 

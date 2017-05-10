@@ -27,6 +27,7 @@ import Prelude(Show)
 import Sys.CmdSpec(CmdSpec, AsCmdSpec(_CmdSpec), AsExecutableName(_ExecutableName), AsExecutableArguments(_ExecutableArguments), AsShellCommand(_ShellCommand), AsRawCommand(_RawCommand))
 import Sys.StdStream(StdStream, AsStdStream(_StdStream))
 import System.FilePath(FilePath)
+import System.Posix.Types(GroupID, UserID)
 import qualified System.Process as Process
 
 -- | Data type representing a process.
@@ -43,6 +44,11 @@ data CreateProcess =
     Bool     
     Bool 
     Bool 
+    Bool 
+    Bool 
+    Bool
+    (Maybe GroupID) 
+    (Maybe UserID) 
   deriving (Eq, Show)
 
 -- | Types that related to @CreateProcess@.
@@ -57,16 +63,16 @@ instance AsCreateProcess p f CreateProcess where
 instance (Profunctor p, Functor f) => AsCreateProcess p f Process.CreateProcess where
   _CreateProcess =
     iso
-      (\(Process.CreateProcess s p e i o r d g c) ->
-        CreateProcess (from _CmdSpec # s) p e (from _StdStream # i) (from _StdStream # o) (from _StdStream # r) d g c)
-      (\(CreateProcess s p e i o r d g c) ->
-        Process.CreateProcess (_CmdSpec # s) p e (_StdStream # i) (_StdStream # o) (_StdStream # r) d g c)
+      (\(Process.CreateProcess s p e i o r d g c x1 x2 x3 x4 x5) ->
+        CreateProcess (from _CmdSpec # s) p e (from _StdStream # i) (from _StdStream # o) (from _StdStream # r) d g c x1 x2 x3 x4 x5)
+      (\(CreateProcess s p e i o r d g c x1 x2 x3 x4 x5) ->
+        Process.CreateProcess (_CmdSpec # s) p e (_StdStream # i) (_StdStream # o) (_StdStream # r) d g c x1 x2 x3 x4 x5)
 
 instance Functor f => AsCmdSpec (->) f CreateProcess where
   _CmdSpec =
     lens
-      (\(CreateProcess s _ _ _ _ _ _ _ _) -> s)
-      (\(CreateProcess _ p e i o r d g c) s -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess s _ _ _ _ _ _ _ _ _ _ _ _ _) -> s)
+      (\(CreateProcess _ p e i o r d g c x1 x2 x3 x4 x5) s -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 instance Applicative f => AsExecutableName (->) f CreateProcess where
   _ExecutableName =
@@ -96,8 +102,8 @@ instance AsWorkingDirectory p f (Maybe FilePath) where
 instance Functor f => AsWorkingDirectory (->) f CreateProcess where
   _WorkingDirectory =
     lens
-      (\(CreateProcess _ p _ _ _ _ _ _ _) -> p)
-      (\(CreateProcess s _ e i o r d g c) p -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ p _ _ _ _ _ _ _ _ _ _ _ _) -> p)
+      (\(CreateProcess s _ e i o r d g c x1 x2 x3 x4 x5) p -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 -- | Types that relate to an environment.
 class AsEnvironment p f s where
@@ -111,8 +117,8 @@ instance AsEnvironment p f (Maybe [(String, String)]) where
 instance Functor f => AsEnvironment (->) f CreateProcess where
   _Environment =
     lens
-      (\(CreateProcess _ _ e _ _ _ _ _ _) -> e)
-      (\(CreateProcess s p _ i o r d g c) e -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ _ e _ _ _ _ _ _ _ _ _ _ _) -> e)
+      (\(CreateProcess s p _ i o r d g c x1 x2 x3 x4 x5) e -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 -- | Types that relate to a standard input stream.
 class AsStdin p f s where
@@ -126,8 +132,8 @@ instance AsStdin p f StdStream where
 instance Functor f => AsStdin (->) f CreateProcess where
   _Stdin =
     lens
-      (\(CreateProcess _ _ _ i _ _ _ _ _) -> i)
-      (\(CreateProcess s p e _ o r d g c) i -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ _ _ i _ _ _ _ _ _ _ _ _ _) -> i)
+      (\(CreateProcess s p e _ o r d g c x1 x2 x3 x4 x5) i -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 -- | Types that relate to a standard output stream.
 class AsStdout p f s where
@@ -141,8 +147,8 @@ instance AsStdout p f StdStream where
 instance Functor f => AsStdout (->) f CreateProcess where
   _Stdout =
     lens
-      (\(CreateProcess _ _ _ _ o _ _ _ _) -> o)
-      (\(CreateProcess s p e i _ r d g c) o -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ _ _ _ o _ _ _ _ _ _ _ _ _) -> o)
+      (\(CreateProcess s p e i _ r d g c x1 x2 x3 x4 x5) o -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 -- | Types that relate to a standard error stream.
 class AsStderr p f s where
@@ -156,8 +162,8 @@ instance AsStderr p f StdStream where
 instance Functor f => AsStderr (->) f CreateProcess where
   _Stderr =
     lens
-      (\(CreateProcess _ _ _ _ _ r _ _ _) -> r)
-      (\(CreateProcess s p e i o _ d g c) r -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ _ _ _ _ r _ _ _ _ _ _ _ _) -> r)
+      (\(CreateProcess s p e i o _ d g c x1 x2 x3 x4 x5) r -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 -- | Types that relate to closing descriptors.
 class AsCloseDescriptors p f s where
@@ -171,8 +177,8 @@ instance AsCloseDescriptors p f Bool where
 instance Functor f => AsCloseDescriptors (->) f CreateProcess where
   _CloseDescriptors =
     lens
-      (\(CreateProcess _ _ _ _ _ _ d _ _) -> d)
-      (\(CreateProcess s p e i o r _ g c) d -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ _ _ _ _ _ d _ _ _ _ _ _ _) -> d)
+      (\(CreateProcess s p e i o r _ g c x1 x2 x3 x4 x5) d -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 -- | Types that relate to creating groups.
 class AsCreateGroup p f s where
@@ -186,8 +192,8 @@ instance AsCreateGroup p f Bool where
 instance Functor f => AsCreateGroup (->) f CreateProcess where
   _CreateGroup =
     lens
-      (\(CreateProcess _ _ _ _ _ _ _ g _) -> g)
-      (\(CreateProcess s p e i o r d _ c) g -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ _ _ _ _ _ _ g _ _ _ _ _ _) -> g)
+      (\(CreateProcess s p e i o r d _ c x1 x2 x3 x4 x5) g-> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)
 
 -- | Types that relate to delegating CTRL-C.
 class AsDelegateCtrlC p f s where
@@ -201,5 +207,5 @@ instance AsDelegateCtrlC p f Bool where
 instance Functor f => AsDelegateCtrlC (->) f CreateProcess where
   _DelegateCtrlC =
     lens
-      (\(CreateProcess _ _ _ _ _ _ _ _ c) -> c)
-      (\(CreateProcess s p e i o r d g _) c -> CreateProcess s p e i o r d g c)
+      (\(CreateProcess _ _ _ _ _ _ _ _ c _ _ _ _ _) -> c)
+      (\(CreateProcess s p e i o r d g _ x1 x2 x3 x4 x5) c -> CreateProcess s p e i o r d g c x1 x2 x3 x4 x5)

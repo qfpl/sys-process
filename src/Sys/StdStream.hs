@@ -7,7 +7,8 @@ module Sys.StdStream(
 , AsStdStream(..)
 , AsInherit(..)
 , AsUseHandle(..)
-, AsCreatePipe
+, AsCreatePipe(..)
+, AsNoStream(..)
 ) where
 
 import Control.Applicative(Applicative)
@@ -27,6 +28,7 @@ data StdStream =
                              -- @Handle@ will use the default encoding
                              -- and newline translation mode (just
                              -- like @Handle@s created by @openFile@).
+  | NoStream
   deriving (Eq, Show)
 
 class AsStdStream p f s where
@@ -46,14 +48,18 @@ instance (Profunctor p, Functor f) => AsStdStream p f Process.StdStream where
                Process.UseHandle h ->
                  UseHandle h
                Process.CreatePipe ->
-                 CreatePipe)
+                 CreatePipe
+               Process.NoStream ->
+                 NoStream)
       (\s -> case s of 
                Inherit ->
                  Process.Inherit
                UseHandle h ->
                  Process.UseHandle h
                CreatePipe ->
-                 Process.CreatePipe)
+                 Process.CreatePipe
+               NoStream ->
+                 Process.NoStream)
 
 class AsInherit p f s where
   _Inherit ::
@@ -73,6 +79,8 @@ instance (Choice p, Applicative f) => AsInherit p f StdStream where
                UseHandle _ ->
                  Nothing
                CreatePipe ->
+                 Nothing
+               NoStream ->
                  Nothing)
 
 class AsUseHandle p f s where
@@ -93,6 +101,8 @@ instance (Choice p, Applicative f) => AsUseHandle p f StdStream where
                UseHandle h ->
                  Just h
                CreatePipe ->
+                 Nothing
+               NoStream ->
                  Nothing)
 
 class AsCreatePipe p f s where
@@ -113,4 +123,28 @@ instance (Choice p, Applicative f) => AsCreatePipe p f StdStream where
                UseHandle _ ->
                  Nothing
                CreatePipe ->
+                 Just ()
+               NoStream ->
+                 Nothing)
+
+class AsNoStream p f s where
+  _NoStream ::
+    Optic' p f s ()
+
+instance AsNoStream p f () where
+  _NoStream =
+    id
+
+instance (Choice p, Applicative f) => AsNoStream p f StdStream where
+  _NoStream =
+    prism'
+      (\() -> NoStream)
+      (\s -> case s of
+               Inherit -> 
+                 Nothing
+               UseHandle _ ->
+                 Nothing
+               CreatePipe ->
+                 Nothing
+               NoStream ->
                  Just ())
