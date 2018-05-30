@@ -14,7 +14,7 @@ description:
 homepage:           https://github.com/NICTA/sys-process
 bug-reports:        https://github.com/NICTA/sys-process/issues
 cabal-version:      >= 1.10
-build-type:         Custom
+build-type:         Simple
 extra-source-files: changelog
 
 source-repository   head
@@ -26,7 +26,7 @@ library
                     Haskell2010
 
   build-depends:
-                      base          >= 3   && <= 5
+                      base          >= 4   && < 5
                     , mtl           >= 2.0 && < 2.3
                     , semigroups    >= 0.8
                     , semigroupoids >= 4.0
@@ -34,7 +34,7 @@ library
                     , lens          >= 4.0 && < 5
                     , transformers  >= 0.3 && < 0.6
                     , process       >= 1.2.3 && < 1.7
-                    , notzero       >= 0.0.11 && <= 0.1
+                    , notzero       >= 0.0.11 && < 0.1
                     , filepath      >= 1.4 && < 2.0
                     , directory     >= 1.2 && < 2.0
 
@@ -55,27 +55,3 @@ library
                     Sys.StdStream
                     Sys.ExitCode
 
-test-suite doctests
-  type:
-                    exitcode-stdio-1.0
-
-  main-is:
-                    doctests.hs
-
-  default-language:
-                    Haskell2010
-
-  build-depends:
-                      base < 5 && >= 3
-                    , doctest >= 0.9.7
-                    , filepath >= 1.3
-                    , directory >= 1.1
-                    , QuickCheck >= 2.0
-                    , template-haskell >= 2.8
-
-  ghc-options:
-                    -Wall
-                    -threaded
-
-  hs-source-dirs:
-                    test
